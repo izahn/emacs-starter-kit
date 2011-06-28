@@ -2,7 +2,7 @@
 #+OPTIONS: toc:nil num:nil ^:nil
 
 * Starter Kit 
-This is the emacs starter kit for the social sciences, from http://kjhealy.github.com/emacs-starter-kit/
+This is the emacs starter kit for the social sciences, from http://kjhealy.github.com/emacs-starter-kit/ It has been customized for use by Ista Zahn.
 ** Miscellaneous Settings and starter-kit overrides
 *** Recent File Menu
 Turn on the recent file menu. 
@@ -35,10 +35,7 @@ The Starter Kit uses Ethan Schoonover's /Solarized/ color theme. You can easily 
 #+end_src
 
 *** Run Emacs in Full Screen
-  I find it very useful to run Emacs in full-screen mode. There is no
-    completely satisfactory way to accomplish this on Mac OS X. What
-    works depends on the flavor of emacs you are using,
-    unfortunately. Choose as appropriate from the following options:
+  I find it very useful to run Emacs in full-screen mode. There is no completely satisfactory way to accomplish this on Mac OS X. What  works depends on the flavor of emacs you are using, unfortunately. On linux I just use KDE fullscreen functionality. Choose as appropriate from the following options (all disabled by default):
 
 **** Option 1
 Require maxframe package to conveniently maxmimize the window. Doesn't work with Emacs 23 on Mac.
@@ -79,7 +76,7 @@ For use with Yamamoto Mitsuharu's Carbon-patched Emacs 23. (This is
     what I use, but it requires you compile a custom Emacs.)
 
 #+source: fullscreen-4
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
     (defun fullscreen (&optional f)
       (interactive)
       (set-frame-parameter f 'fullscreen
@@ -127,18 +124,18 @@ When your frame (i.e., the main Emacs window) is split into different parts (e.g
     Used with Mitsuharu Yamamoto's carbon-patched Emacs, which turns
     off support for default mac bindings. Turned off by default.
 #+srcname: mac-keys
-#+begin_src emacs-lisp tangle: no
-   (setq mac-command-modifier 'alt mac-option-modifier 'meta)
-   (require 'redo+)
-   (require 'mac-key-mode)
-   (mac-key-mode 1)
-   (add-hook 'mac-key-mode-hook
-       (lambda()
-         (interactive)
-         (if mac-key-mode
-             (setq mac-option-modifier 'meta)
-             (setq mac-option-modifier nil)
-             )))
+#+begin_src emacs-lisp :tangle no
+  (setq mac-command-modifier 'alt mac-option-modifier 'meta)
+  (require 'redo+)
+  (require 'mac-key-mode)
+  (mac-key-mode 1)
+  (add-hook 'mac-key-mode-hook
+      (lambda()
+        (interactive)
+        (if mac-key-mode
+            (setq mac-option-modifier 'meta)
+            (setq mac-option-modifier nil)
+            )))
 #+end_src
 
 ** Local LaTeX settings
@@ -583,7 +580,7 @@ Some local tweaks.
 #+srcname: final-custom
 #+begin_src emacs-lisp
   ;; Line-spacing tweak (Optimized for PragmataPro)
-  (setq-default line-spacing 5)
+  (setq-default line-spacing 4)
   
   ;; minimize fringe
   (setq-default indicate-empty-lines nil)
@@ -595,20 +592,9 @@ Some local tweaks.
   ;; Base dir
   (cd "~/")
   
-  ;; custom variables kludge. Why can't I get these to work via setq?
-  (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
-  '(LaTeX-XeTeX-command "xelatex -synctex=1")
-  '(TeX-engine (quote xetex))
-  '(TeX-view-program-list (quote (("Skim" "/Applications/Skim.app/Contents/SharedSupport/displayline %n %o %b"))))
-  '(TeX-view-program-selection (quote (((output-dvi style-pstricks) "dvips and gv") (output-dvi "xdvi") (output-pdf "Skim") (output-html "xdg-open"))))
-  '(show-paren-mode t)
-  '(blink-cursor-mode nil)
-  '(text-mode-hook (quote (text-mode-hook-identify)))
-  )
+  ;; Load custom-set-variables
+  (setq custom-file "~/.emacs.d/custom.el")
+  (load "~/.emacs.d/custom.el" t t)
 #+end_src
    
    
