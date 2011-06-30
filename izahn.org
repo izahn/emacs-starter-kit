@@ -125,17 +125,17 @@ When your frame (i.e., the main Emacs window) is split into different parts (e.g
     off support for default mac bindings. Turned off by default.
 #+srcname: mac-keys
 #+begin_src emacs-lisp :tangle no
-  (setq mac-command-modifier 'alt mac-option-modifier 'meta)
-  (require 'redo+)
-  (require 'mac-key-mode)
-  (mac-key-mode 1)
-  (add-hook 'mac-key-mode-hook
-      (lambda()
-        (interactive)
-        (if mac-key-mode
-            (setq mac-option-modifier 'meta)
-            (setq mac-option-modifier nil)
-            )))
+   (setq mac-command-modifier 'alt mac-option-modifier 'meta)
+   (require 'redo+)
+   (require 'mac-key-mode)
+   (mac-key-mode 1)
+   (add-hook 'mac-key-mode-hook
+       (lambda()
+         (interactive)
+         (if mac-key-mode
+             (setq mac-option-modifier 'meta)
+             (setq mac-option-modifier nil)
+             )))
 #+end_src
 
 ** Local LaTeX settings
