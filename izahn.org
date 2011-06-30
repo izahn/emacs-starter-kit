@@ -1,25 +1,9 @@
 #+TITLE: Local User Customizations
 #+OPTIONS: toc:nil num:nil ^:nil
-
+#+BABEL: :results silent
 * Starter Kit 
 This is the emacs starter kit for the social sciences, from http://kjhealy.github.com/emacs-starter-kit/ It has been customized for use by Ista Zahn.
 ** Miscellaneous Settings and starter-kit overrides
-*** Copy and paste settings
-Use CUA-mode, play nice with X-window clipboard
-
-#+srcname: cua-keys-clipboard
-#+begin_src emacs-lisp
-  (setq cua-enable-cua-keys t)
-  (setq yank-pop-change-selection t)
-  (setq x-select-enable-clipboard t)
-#+end_src
-
-#+results: cua-keys-clipboard
-: t
-
-#+results: use-cua
-: t
-
 *** Recent File Menu
 Turn on the recent file menu. 
 
@@ -152,6 +136,29 @@ When your frame (i.e., the main Emacs window) is split into different parts (e.g
              (setq mac-option-modifier 'meta)
              (setq mac-option-modifier nil)
              )))
+#+end_src
+
+*** Copy and paste settings
+Use CUA-mode, play nice with X-window clipboard
+
+#+srcname: cua-keys-clipboard
+#+begin_src emacs-lisp
+  (setq cua-enable-cua-keys t)
+  (setq yank-pop-change-selection t)
+  (setq x-select-enable-clipboard t)
+#+end_src
+
+*** Speedbar
+Use speedbar for quick access to files and file information. Enable
+sr-speedbar for a more convenient interface.
+
+#+srcname: configure-speedbar
+#+begin_src emacs-lisp
+  (require 'sr-speedbar)
+  
+  (setq speedbar-supported-extension-expressions (quote (".[ch]\\(\\+\\+\\|pp\\|c\\|h\\|xx\\)?" ".tex\\(i\\(nfo\\)?\\)?" ".el" ".emacs" ".l" ".lsp" ".p" ".java" ".js" ".f\\(90\\|77\\|or\\)?" ".ada" ".p[lm]" ".tcl" ".m" ".scm" ".pm" ".py" ".g" ".s?html" ".ma?k" "[Mm]akefile\\(\\.in\\)?" ".R" ".Rnw")))
+  (setq speedbar-use-imenu-flag t)
+  (setq sr-speedbar-right-side nil)
 #+end_src
 
 ** Local LaTeX settings
