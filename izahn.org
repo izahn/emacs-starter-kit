@@ -4,6 +4,22 @@
 * Starter Kit 
 This is the emacs starter kit for the social sciences, from http://kjhealy.github.com/emacs-starter-kit/ It has been customized for use by Ista Zahn.
 ** Miscellaneous Settings and starter-kit overrides
+*** Copy and paste settings
+Use CUA-mode, play nice with X-window clipboard
+
+#+srcname: cua-keys-clipboard
+#+begin_src emacs-lisp
+  (setq cua-enable-cua-keys t)
+  (setq yank-pop-change-selection t)
+  (setq x-select-enable-clipboard t)
+#+end_src
+
+#+results: cua-keys-clipboard
+: t
+
+#+results: use-cua
+: t
+
 *** Recent File Menu
 Turn on the recent file menu. 
 
@@ -552,7 +568,7 @@ Sometimes useful for getting help on R or Emacs.
 #+end_src
 
 ** Final Custom elements
-Some local tweaks. 
+Some local tweaks. Note the custom-file has been cleaned out in preparation for moving (almost) all settings to this file. A backup has been preserved in a [[file://~/.emacs.d/customBackup][backup file]]
 
 #+srcname: final-custom
 #+begin_src emacs-lisp
