@@ -150,7 +150,9 @@ Use CUA-mode, play nice with X-window clipboard
 
 *** Speedbar
 Use speedbar for quick access to files and file information. Enable
-sr-speedbar for a more convenient interface.
+sr-speedbar for a more convenient interface. Note that sr-speedbar is
+not in ELPA. See http://www.emacswiki.org/emacs/SrSpeedbar for
+information and download instructions.
 
 #+srcname: configure-speedbar
 #+begin_src emacs-lisp
@@ -159,6 +161,45 @@ sr-speedbar for a more convenient interface.
   (setq speedbar-supported-extension-expressions (quote (".[ch]\\(\\+\\+\\|pp\\|c\\|h\\|xx\\)?" ".tex\\(i\\(nfo\\)?\\)?" ".el" ".emacs" ".l" ".lsp" ".p" ".java" ".js" ".f\\(90\\|77\\|or\\)?" ".ada" ".p[lm]" ".tcl" ".m" ".scm" ".pm" ".py" ".g" ".s?html" ".ma?k" "[Mm]akefile\\(\\.in\\)?" ".R" ".Rnw")))
   (setq speedbar-use-imenu-flag t)
   (setq sr-speedbar-right-side nil)
+  (setq sr-speedbar-width-console 34)
+  (setq sr-speedbar-width-x 34)
+#+end_src
+
+*** Turn off autopair
+Some people like autopair, and the kit enables it by default. But
+sometimes it just gets in the way, so it is disabled here.
+
+#+srcname: disable-autopair
+#+begin_src emacs-lisp
+  (autopair-mode nil)
+  (autopair-global-mode nil) ;This may not actually do anything
+#+end_src
+
+*** Automatic R function yasnippets
+Use r-auto-yas to automatically generate yasnippets for R functions in
+ess mode. Not in ELPA, see
+http://www.svenhartenstein.de/Software/R-autoyas and
+http://www.emacswiki.org/emacs/r-autoyas.el
+
+#+srcname: configure-r-auto-yas
+#+begin_src emacs-lisp
+  (setq r-autoyas-auto-expand-with-paren nil)
+  (setq r-autoyas-expand-package-functions-only nil)
+  (setq r-autoyas-ignored-functions (quote ("function" "for" "if" "cos" "sin" "exp" "tan" "cat" "print")))
+  (setq r-autoyas-number-of-commas-before-return 1)
+  (setq r-autoyas-save-expression-to-memory nil)
+  
+  (require 'r-autoyas)
+#+end_src
+*** Configure ido mode and use it everywhere
+Use ido-mode everywhere and make it pretty.
+#+srcname: configure-ido-mode
+#+begin_src emacs-lisp
+  (setq ido-decorations (quote ("
+  ▬▶ " "" "
+    * " "
+    ..." "<" ">" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
+  (ido-everywhere t)  
 #+end_src
 
 ** Local LaTeX settings
