@@ -615,6 +615,16 @@ Sometimes useful for getting help on R or Emacs.
                        '("irc.freenode.net"))
 #+end_src
 
+** Local ESS settings
+Configure automatic argument display and optionally use tooltip mode
+#+srcname: local-ess-settings
+#+begin_src emacs-lisp
+  (setq ess-pdf-viewer-pref "okular")
+  (setq ess-r-args-electric-paren t)
+  (setq ess-r-args-keep-silent nil)
+  (setq ess-r-args-show-as (quote tooltip))
+#+end_src
+
 ** Final Custom elements
 Some local tweaks. Note the custom-file has been cleaned out in preparation for moving (almost) all settings to this file. A backup has been preserved in a [[file://~/.emacs.d/customBackup][backup file]]
 
