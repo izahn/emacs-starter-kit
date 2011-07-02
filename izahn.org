@@ -1,6 +1,5 @@
 #+TITLE: Local User Customizations
 #+OPTIONS: toc:nil num:nil ^:nil
-#+BABEL: :results silent
 * Starter Kit 
 This is the emacs starter kit for the social sciences, from http://kjhealy.github.com/emacs-starter-kit/ It has been customized for use by Ista Zahn.
 ** Miscellaneous Settings and starter-kit overrides
@@ -172,7 +171,8 @@ sometimes it just gets in the way, so it is disabled here.
 #+srcname: disable-autopair
 #+begin_src emacs-lisp
   (autopair-mode nil)
-  (autopair-global-mode nil) ;This may not actually do anything
+  (autopair-global-mode nil)
+  (unload-feature 'autopair t)
 #+end_src
 
 *** Automatic R function yasnippets
@@ -200,6 +200,26 @@ Use ido-mode everywhere and make it pretty.
     * " "
     ..." "<" ">" " [No match]" " [Matched]" " [Not readable]" " [Too big]" " [Confirm]")))
   (ido-everywhere t)  
+#+end_src
+
+*** Configure tooltips
+Tooltips can be useful, but only if they don't get in your way. The
+default settings try to make sure that the tooltip doesn't cover your
+text.
+
+#+srcname: configure-tooltips
+#+begin_src emacs-lisp
+(setq tooltip-frame-parameters
+      '((name . "tooltip")
+	(left . 20)
+	(top . 20)))
+
+ (require 'popup-pos-tip)
+ (defadvice popup-tip
+   (around popup-pos-tip-wrapper (string &rest args) activate)
+   (if (eq window-system 'x)
+       (apply 'popup-pos-tip string args)
+     ad-do-it))
 #+end_src
 
 ** Local LaTeX settings
@@ -266,6 +286,7 @@ Tell RefTeX where the bibliography files are.
                         (shell-command "vc")))
 
 #+end_src
+
 
 ** Local Pandoc Support 
  Make Emacs see where pandoc is installed. (Emacs can't access the bash
@@ -598,6 +619,7 @@ Create =html= files form the =org= sources, to help with documentation. To set u
   (ac-flyspell-workaround)
   (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
   (setq ac-auto-show-menu 0.8)
+  (setq ac-quick-help-delay 3)
   ;; consistent  with zenburnish theme
   (set-face-background 'ac-candidate-face "#366060")
   (set-face-background 'ac-selection-face "#8cd0d3")
@@ -622,8 +644,12 @@ Configure automatic argument display and optionally use tooltip mode
   (setq ess-pdf-viewer-pref "okular")
   (setq ess-r-args-electric-paren t)
   (setq ess-r-args-keep-silent nil)
-  (setq ess-r-args-show-as (quote tooltip))
+  (setq ess-r-args-show-as (quote message)) ;tooltip would be nice,
+  ;; but the default of message is much more practical
 #+end_src
+
+#+results: local-ess-settings
+: tooltip
 
 ** Final Custom elements
 Some local tweaks. Note the custom-file has been cleaned out in preparation for moving (almost) all settings to this file. A backup has been preserved in a [[file://~/.emacs.d/customBackup][backup file]]
