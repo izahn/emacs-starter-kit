@@ -213,13 +213,6 @@ text.
       '((name . "tooltip")
 	(left . 20)
 	(top . 20)))
-
- (require 'popup-pos-tip)
- (defadvice popup-tip
-   (around popup-pos-tip-wrapper (string &rest args) activate)
-   (if (eq window-system 'x)
-       (apply 'popup-pos-tip string args)
-     ad-do-it))
 #+end_src
 
 ** Local LaTeX settings
@@ -286,7 +279,6 @@ Tell RefTeX where the bibliography files are.
                         (shell-command "vc")))
 
 #+end_src
-
 
 ** Local Pandoc Support 
  Make Emacs see where pandoc is installed. (Emacs can't access the bash
@@ -399,7 +391,7 @@ When in an org-mode buffer, bind TeX-insert-quote to =C-c "=. Turned off by defa
     (setq org-export-latex-minted-options
           '(;("frame" "single")
             ;("bgcolor" "bg") ; bg will need to be defined in the preamble of your document. It's defined in org-preamble-pdflatex.sty and org-preamble-xelatex.sty below.
-            ("fontsize" "\\small")
+            ("fontsize" "\\scriptsize")
             ))
             
               
@@ -445,8 +437,7 @@ When in an org-mode buffer, bind TeX-insert-quote to =C-c "=. Turned off by defa
                     (if (string-match "LATEX_CMD: pdflatex" (buffer-string))
                         (setq org-export-latex-classes
                               (cons '("article"
-                                      "\\documentclass[11pt,article,oneside]{memoir}
-      \\input{vc} % vc package"
+                                      "\\documentclass[11pt,article,oneside]{memoir}"
                                       ("\\section{%s}" . "\\section*{%s}")
                                       ("\\subsection{%s}" . "\\subsection*{%s}")
                                       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
@@ -457,8 +448,7 @@ When in an org-mode buffer, bind TeX-insert-quote to =C-c "=. Turned off by defa
                     (if (string-match "LATEX_CMD: xelatex" (buffer-string))
                         (setq org-export-latex-classes
                               (cons '("article"
-                                      "\\documentclass[11pt,article,oneside]{memoir}
-    \\input{vc} % vc package"
+                                      "\\documentclass[11pt,article,oneside]{memoir}"
                                       ("\\section{%s}" . "\\section*{%s}")
                                       ("\\subsection{%s}" . "\\subsection*{%s}")
                                       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
