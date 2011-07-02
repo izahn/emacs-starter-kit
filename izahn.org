@@ -170,9 +170,11 @@ sometimes it just gets in the way, so it is disabled here.
 
 #+srcname: disable-autopair
 #+begin_src emacs-lisp
+  (setq autopair-mode nil)
+  (setq autopair-global-mode nil)
   (autopair-mode nil)
-  (autopair-global-mode nil)
-  (unload-feature 'autopair t)
+  
+  (setq paredit-mode nil)
 #+end_src
 
 *** Automatic R function yasnippets
