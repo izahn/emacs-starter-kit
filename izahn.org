@@ -374,12 +374,21 @@ When in an org-mode buffer, bind TeX-insert-quote to =C-c "=. Turned off by defa
 #+end_src
 
 *** XeLaTeX and pdfLaTeX Export Settings
-   Configure org-mode to export directly to PDF using pdflatex or
-   xelatex, compiling the bibliography as it goes, with my preferred
-   setup in each case. There is a good deal of local stuff in this section. The required style files used below are available at https://github.com/kjhealy/latex-custom-kjh. You may need to adjust or remove some of these settings depending on your
-   preferences and local configuration.
+    Configure org-mode to export directly to PDF using pdflatex or
+    xelatex, compiling the bibliography as it goes using latexmk. You
+    may need to adjust or remove some of these settings depending on your
+    preferences and local configuration. Note that for Beamer class
+    you can use =#+MACRO: BEAMERMODE <mode.=, =#+MACRO: BEAMERTHEME
+    <theme>=, =#+MACRO: BEAMERCOLORTHEME <colortheme>=, =#+MACRO:
+    BEAMERSUBJECT <subject>= and =#+MACRO: BEAMERINSTITUTE
+    <organization.= in your .org file to set these elements. Likewise,
+    you can use =#+MACRO: SHORTTITLE <title>=,  =#+MACRO: AUTHORNOTE
+    <author note>=, and =#+MACRO: ABSTRACT <abstract>= to set these
+    elements when exporting to apa6e format. 
 
-#+source: orgmode-xelatex-export
+**** Source code handling
+    First set up general source code handling options.
+#+source: orgmode-latex-source-export
 #+begin_src emacs-lisp
   (require 'org-latex)
   ;; Choose either listings or minted for exporting source code blocks.
@@ -392,30 +401,50 @@ When in an org-mode buffer, bind TeX-insert-quote to =C-c "=. Turned off by defa
   ;; default settings for minted code blocks
   (setq org-export-latex-minted-options
         '(;("frame" "single")
-                                          ;("bgcolor" "bg") ; bg will need to be defined in the preamble of your document. It's defined in org-preamble-pdflatex.sty and org-preamble-xelatex.sty below.
+                                          ;("bgcolor" "bg") ; if uncommented, bg will need to be defined in the preamble of your document.
           ("fontsize" "\\scriptsize")
           ))
   
+  ;; Make sure minted knows about R source blocks
+  (add-to-list 'org-export-latex-minted-langs
+               '("R" "r"))
   
+  ;; Set reasonable figure width
+  (setq org-export-latex-image-defalut-option "width=\\textwidth")
+#+end_src
+
+**** LaTeX commands
+    Set up latex commands using pdflatex of xelatex depending on the
+    value of LATEX_CMD.
+#+source: orgmode-latex-export-commands
+#+begin_src emacs-lisp 
   ;; Originally taken from Bruno Tavernier: http://thread.gmane.org/gmane.emacs.orgmode/31150/focus=31432
   ;; but adapted to use latexmk 4.22 or higher.
   (defun my-auto-tex-cmd ()
     "When exporting from .org with latex, automatically run latex,
-                 pdflatex, or xelatex as appropriate, using latexmk."
+                       pdflatex, or xelatex as appropriate, using latexmk."
     (let ((texcmd)))
     ;; default command: pdflatex
-    (setq texcmd "latexmk -pdflatex='pdflatex --shell-escape' -pdf %f")
+    (setq texcmd "latexmk -f -pdflatex='pdflatex --shell-escape' -pdf %f")
     ;; pdflatex -> .pdf
     (if (string-match "LATEX_CMD: pdflatex" (buffer-string))
-        (setq texcmd "latexmk -pdflatex='pdflatex --shell-escape' -pdf %f"))
+        (setq texcmd "latexmk -f -pdflatex='pdflatex --shell-escape' -pdf %f"))
     ;; xelatex -> .pdf
     (if (string-match "LATEX_CMD: xelatex" (buffer-string))
-        (setq texcmd "latexmk -pdflatex='xelatex --shell-escape' -pdf %f"))
+        (setq texcmd "latexmk -f -pdflatex='xelatex --shell-escape' -pdf %f"))
     ;; LaTeX compilation command
     (setq org-latex-to-pdf-process (list texcmd)))
   
   (add-hook 'org-export-latex-after-initial-vars-hook 'my-auto-tex-cmd)
-  
+#+end_src
+
+**** Default packages
+    Set up default packages that we will always load. This section is
+    set up so that you can define different packages depending on the
+    LATEX_CMD in use. Note that hyperref is not in this list and will
+    need to be added in the latex-classes Alists below. 
+#+source: orgmode-latex-default-packages
+#+begin_src emacs-lisp
   ;; Default packages included in /every/ tex file, latex, pdflatex or xelatex
   (setq org-export-latex-packages-alist
         '(("" "graphicx" t)
@@ -424,42 +453,103 @@ When in an org-mode buffer, bind TeX-insert-quote to =C-c "=. Turned off by defa
           ("" "booktabs" )))
   
   ;; Custom packages
-  (defun my-auto-tex-parameters ()
+  (defun my-auto-tex-package-parameters ()
     "Automatically select the tex packages to include. See https://github.com/kjhealy/latex-custom-kjh for the support files included here."
     ;; default packages for ordinary latex or pdflatex export
     (setq org-export-latex-default-packages-alist
           '(("AUTO" "inputenc" t)
-            ("" "minted" t)
-            ("" "hyperref" t)))
+            ("" "minted" t)))
     ;; Packages to include when xelatex is used
     (if (string-match "LATEX_CMD: xelatex" (buffer-string))
         (setq org-export-latex-default-packages-alist
-              '(("" "minted" t)
-                ("" "hyperref" t))))
+              '(("" "minted" t)))))
   
-    (if (string-match "LATEX_CMD: pdflatex" (buffer-string))
-        (setq org-export-latex-classes
-              (cons '("article"
-                      "\\documentclass[11pt,article,oneside]{memoir}"
-                      ("\\section{%s}" . "\\section*{%s}")
-                      ("\\subsection{%s}" . "\\subsection*{%s}")
-                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-                    org-export-latex-classes)))
+  (add-hook 'org-export-latex-after-initial-vars-hook 'my-auto-tex-package-parameters)
+#+end_src  
+
+**** Class lists
+     Defines the available class lists. Currently these include article,
+     apa6e, apa6e-strict, and beamer. Note that hyperref must be
+     loaded here! If you add classes, you must make sure to include hyperref. 
+#+source: orgmode-latex-class-list
+#+begin_src emacs-lisp
+    ;; Clear any previously defined class list
+    (setq org-export-latex-classes nil)
+    ;; Set default classes list
+    (add-to-list 'org-export-latex-classes
+                 ;; Article class
+                 '("article"
+                   "\\documentclass[11pt,article,oneside]{memoir}
+  \\usepackage{hyperref}"
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+    (add-to-list 'org-export-latex-classes
+                 ;; APA 6th edition class, figures and footnotes in text
+                 '("apa6e"
+                   "\\documentclass[leavefloats]{apa6e}
+    \\usepackage{hyperref}
+    \\abstract{{{{apa-abstract}}}}
+    \\shorttitle{{{{shorttitle}}}}
+    \\hypersetup{hidelinks}
+    \\authornote{{{{authornote}}}}"
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+    (add-to-list 'org-export-latex-classes
+                 ;; APA 6th edition class, figures and footnotes at end
+                 '("apa6e-strict"
+                   "\\documentclass[leavefloats]{apa6e}
+    \\hypersetup{hidelinks}
+    \\shorttitle{{{{shorttitle}}}}
+    \\authornote{{{{authornote}}}}
+    \\abstract{{{{abstract}}}}"
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+    (add-to-list 'org-export-latex-classes
+                 ;; beamer class, for presentations
+                 '("beamer"
+                   "\\documentclass[11pt]{beamer}
+          \\mode<{{{beamermode}}}>
+          \\usetheme{{{{beamertheme}}}}
+          \\usecolortheme{{{{beamercolortheme}}}}
+          \\setbeameroption{show notes}
+          \\usepackage{color}
+          \\usepackage{hyperref}
+          \\usepackage{verbatim}\n
+          \\institute{{{{beamerinstitute}}}}
+           \\subject{{{{beamersubject}}}}"
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\begin{frame}[fragile]\\frametitle{%s}"
+                    "\\end{frame}"
+                    "\\begin{frame}[fragile]\\frametitle{%s}"
+                    "\\end{frame}")))
+    
+#+end_src
+
+**** Special handling for APA classes
+#+source: orgmode-latex-apa-class-handling
+#+begin_src emacs-lisp
+  ;; Don't print a table of contents for apa6e class.
+  (defun org-export-latex-no-toc (depth)
+    (when depth
+      (format "%% Org-mode is exporting headings to %s levels.\n"
+              depth)))
   
-    (if (string-match "LATEX_CMD: xelatex" (buffer-string))
-        (setq org-export-latex-classes
-              (cons '("article"
-                      "\\documentclass[11pt,article,oneside]{memoir}"
-                      ("\\section{%s}" . "\\section*{%s}")
-                      ("\\subsection{%s}" . "\\subsection*{%s}")
-                      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                      ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                      ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-                    org-export-latex-classes))))
-  
-  (add-hook 'org-export-latex-after-initial-vars-hook 'my-auto-tex-parameters)
+  (defun my-auto-tex-apa-toc-parameters ()
+    (if (string-match "LATEX_CLASS: apa6e" (buffer-string))
+        (setq org-export-latex-format-toc-function
+              'org-export-latex-no-toc))
+    (if (string-match "LATEX_CLASS: apa6e-strict" (buffer-string))
+        (setq org-export-latex-format-toc-function 'org-export-latex-no-toc)))
+  (add-hook 'org-export-latex-after-initial-vars-hook 'my-auto-tex-apa-toc-parameters)
 #+end_src
 
 *** ebib and citation settings
@@ -643,6 +733,13 @@ Configure automatic argument display and optionally use tooltip mode
 
 #+results: local-ess-settings
 : tooltip
+
+** Templates
+#+source: configure-templates
+#+begin_src emacs-lisp
+  (require 'template)
+  (template-initialize)
+#+end_src
 
 ** Final Custom elements
 Some local tweaks. Note the custom-file has been cleaned out in preparation for moving (almost) all settings to this file. A backup has been preserved in a [[file://~/.emacs.d/customBackup][backup file]]
