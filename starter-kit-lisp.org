@@ -21,7 +21,12 @@ Support for editing list dialects including [[* Emacs Lisp][Emacs Lisp]], [[* Sc
    [[http://www.emacswiki.org/emacs/ParEdit][Paredit]] might seem weird at first, but it really makes writing lisp a
    much more comfortable experience.  This is especially useful in
    combination with the sexp movement functions (=C-M-f= forward, =C-M-b=
-   back, =C-M-u= up, =C-M-d= down)
+   back, =C-M-u= up, =C-M-d= down).
+
+   However, I (Ista) hate paredit mode. Highlight mismatches = good,
+   auto-insert them = bad in my view. So disable this by default. You
+   can re-enable it by enabling the paredit block in your personal
+   configuration file.
 
 #+begin_src emacs-lisp
 (defun turn-on-paredit ()
@@ -50,7 +55,7 @@ Support for editing list dialects including [[* Emacs Lisp][Emacs Lisp]], [[* Sc
 (add-hook 'emacs-lisp-mode-hook 'run-coding-hook)
 (add-hook 'emacs-lisp-mode-hook 'esk-remove-elc-on-save)
 ;; (add-hook 'emacs-lisp-mode-hook 'idle-highlight)
-(add-hook 'emacs-lisp-mode-hook 'turn-on-paredit)
+;; (add-hook 'emacs-lisp-mode-hook 'turn-on-paredit)
 
 (defun esk-remove-elc-on-save ()
   "If you're saving an elisp file, likely the .elc is no longer valid."
@@ -122,7 +127,7 @@ Only works with files in your project root's src/, not in dependencies."
   '(add-to-list 'ffip-patterns "*.clj"))
 
 ;; You might like this, but it's a bit disorienting at first:
-(add-hook 'clojure-mode-hook 'turn-on-paredit)
+;; (add-hook 'clojure-mode-hook 'turn-on-paredit)
 
 (defun clojure-project (path)
   "Setup classpaths for a clojure project and starts a new SLIME session.
@@ -187,7 +192,7 @@ idea to extend this feature beyond simply the =fn= function.
 #+begin_src emacs-lisp
 (add-hook 'lisp-mode-hook 'run-coding-hook)
 ;; (add-hook 'lisp-mode-hook 'idle-highlight)
-(add-hook 'lisp-mode-hook 'turn-on-paredit)
+;; (add-hook 'lisp-mode-hook 'turn-on-paredit)
 (font-lock-add-keywords 'lisp-mode
 			'(("(\\|)" . 'esk-paren-face)))
 #+end_src

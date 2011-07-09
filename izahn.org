@@ -164,17 +164,19 @@ information and download instructions.
   (setq sr-speedbar-width-x 34)
 #+end_src
 
-*** Turn off autopair
-Some people like autopair, and the kit enables it by default. But
-sometimes it just gets in the way, so it is disabled here.
-
-#+srcname: disable-autopair
-#+begin_src emacs-lisp
-  (setq autopair-mode nil)
-  (setq autopair-global-mode nil)
-  (autopair-mode nil)
-  
-  (setq paredit-mode nil)
+*** autopair and paredit
+Some people like autopair / paredit, but I (Ista) hate it. My version of the
+starter kit disables both. If you want them back, turn on this section by
+deleting =:tangle no= at the end of the =begin_src= line.
+#+srcname: autopair-paredit-settings
+#+begin_src emacs-lisp :tangle no
+;; paredit
+(add-hook 'lisp-mode-hook 'turn-on-paredit)
+(add-hook 'clojure-mode-hook 'turn-on-paredit)
+(add-hook 'emacs-lisp-mode-hook 'turn-on-paredit)
+(add-hook 'espresso-mode-hook 'turn-on-paredit)
+;; autopair
+(autopair-global-mode)
 #+end_src
 
 *** Automatic R function yasnippets
@@ -725,14 +727,16 @@ Configure automatic argument display and optionally use tooltip mode
 #+srcname: local-ess-settings
 #+begin_src emacs-lisp
   (setq ess-pdf-viewer-pref "okular")
-  (setq ess-r-args-electric-paren t)
+  ;; (setq ess-r-args-electric-paren t) ;; using eldoc instead
   (setq ess-r-args-keep-silent nil)
   (setq ess-r-args-show-as (quote message)) ;tooltip would be nice,
   ;; but the default of message is much more practical
+  
+  ;; Use eldoc because that way the argument list does not disappear
+  ;; when you press a key
+  (require 'ess-eldoc)
+  (add-hook 'inferior-ess-mode-hook 'ess-use-eldoc)
 #+end_src
-
-#+results: local-ess-settings
-: tooltip
 
 ** Templates
 #+source: configure-templates
