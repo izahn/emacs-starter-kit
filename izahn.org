@@ -218,6 +218,16 @@ text.
 	(left . 20)
 	(top . 20)))
 #+end_src
+*** Disable auto fill mode
+I dislike auto-fill-mode, so here it is disabled. Noweb mode likes to
+try to re-enable it, and this is also prevented.
+
+#+source: disable-autofill
+#+begin_src emacs-lisp
+(auto-fill-mode nil)
+(remove-hook 'noweb-select-doc-mode-hook 'noweb-auto-fill-doc-mode)
+(remove-hook 'noweb-select-code-mode-hook 'noweb-auto-fill-code-mode)  
+#+end_src
 
 ** Local LaTeX settings
 *** In-text Smart Quotes (XeLaTeX only)
@@ -739,10 +749,17 @@ Configure automatic argument display and optionally use tooltip mode
 #+end_src
 
 ** Final Custom elements
-Some local tweaks. Note the custom-file has been cleaned out in preparation for moving (almost) all settings to this file. A backup has been preserved in a [[file://~/.emacs.d/customBackup][backup file]]
+Some local tweaks for line wrapping/spacing, menu and toolbars.
 
 #+srcname: final-custom
 #+begin_src emacs-lisp
+  ;; Use visual line mode (soft wrapping) everywhere
+  (global-visual-line-mode 1)
+  
+  ;; show menu but not toolbar
+  (menu-bar-mode 1)
+  (tool-bar-mode -1)
+  
   ;; Line-spacing tweak (Optimized for DejaVu)
   (setq-default line-spacing 2)
   
