@@ -738,13 +738,6 @@ Configure automatic argument display and optionally use tooltip mode
   (add-hook 'inferior-ess-mode-hook 'ess-use-eldoc)
 #+end_src
 
-** Templates
-#+source: configure-templates
-#+begin_src emacs-lisp
-  (require 'template)
-  (template-initialize)
-#+end_src
-
 ** Final Custom elements
 Some local tweaks. Note the custom-file has been cleaned out in preparation for moving (almost) all settings to this file. A backup has been preserved in a [[file://~/.emacs.d/customBackup][backup file]]
 
