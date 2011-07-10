@@ -25,7 +25,7 @@ The Starter Kit uses Ethan Schoonover's /Solarized/ color theme. You can easily 
       (color-theme-solarized 'dark)
     ;; or if you prefer ...
     ;; (color-theme-solarized 'light)
-    (color-theme-tangosoft) ;; Emacs started in tty
+    (color-theme-solarized-dark) ;; Emacs started in tty
       )
   
   ;; Define a shortcut to switch between dark and light versions of solarized
