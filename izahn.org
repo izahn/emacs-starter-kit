@@ -26,7 +26,7 @@ The Starter Kit uses Ethan Schoonover's /Solarized/ color theme. You can easily 
     ;; or if you prefer ...
     ;; (color-theme-solarized 'light)
     (color-theme-solarized-dark) ;; Emacs started in tty
-      )
+    )
   
   ;; Define a shortcut to switch between dark and light versions of solarized
   (global-set-key (kbd "C-c l") 'color-theme-solarized)
@@ -219,14 +219,14 @@ text.
 	(top . 20)))
 #+end_src
 *** Disable auto fill mode
-I dislike auto-fill-mode, so here it is disabled. Noweb mode likes to
-try to re-enable it, and this is also prevented.
-
+I dislike auto-fill-mode, so my version of the kit does not load it. If you want it back change the =:tangle= argument of the following source block to =yes=
 #+source: disable-autofill
-#+begin_src emacs-lisp
-(auto-fill-mode nil)
-(remove-hook 'noweb-select-doc-mode-hook 'noweb-auto-fill-doc-mode)
-(remove-hook 'noweb-select-code-mode-hook 'noweb-auto-fill-code-mode)  
+#+begin_src emacs-lisp :tangle no
+;; turn on auto-fill for ess mode
+  (add-hook 'ess-mode-hook 'turn-on-auto-fill)
+  (add-hook 'inferior-ess-mode-hook 'turn-on-auto-fill) 
+;; Turn on auto-fill for all text modes  
+  (add-hook 'text-mode-hook 'turn-on-auto-fill)  
 #+end_src
 
 ** Local LaTeX settings
