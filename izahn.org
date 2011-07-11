@@ -748,6 +748,30 @@ Configure automatic argument display and optionally use tooltip mode
   (add-hook 'inferior-ess-mode-hook 'ess-use-eldoc)
 #+end_src
 
+** nXhtml for web development
+nXhtml is a very nice emacs mode for web development.
+
+#+source: load-web-dev-nXhtml
+#+begin_src emacs-lisp
+  (load "~/.emacs.d/src/nxhtml/autostart.el")
+#+end_src
+
+** Print in web browser
+Printing in emacs can be challenging. The solution adopted here is to
+pretty-print buffers using a web browser.
+#+source: print-in-browser
+#+begin_src emacs-lisp
+
+;; Enable print in browser
+  (setq hfyview-quick-print-in-files-menu t)
+  (require 'hfyview) ;; bundled with nXhtml mode, see above
+
+;; Hide old print menu
+  (setq noprint-hide-print-in-menus t)
+  (setq noprint-hide-ps-print-in-menus t)
+  (require 'noprint) 
+#+end_src
+
 ** Final Custom elements
 Some local tweaks for line wrapping/spacing, menu and toolbars.
 
